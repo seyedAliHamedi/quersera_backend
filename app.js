@@ -5,6 +5,7 @@ const passport = require("passport");
 const session = require("express-session");
 
 const { dbUser, dbPassword, dbName } = require("./config/constants");
+const { localAuth, jwtAuth } = require("./config/auth");
 const app = express();
 
 //* Database connection
@@ -23,6 +24,19 @@ mongoose.connect(
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
+
+app.use(
+  session({
+    secret: "secret",
+    resave: true,
+    saveUninitialized: true,
+  })
+);
+
+localAuth(passport);
+jwtAuth(passport);
+app.use(passport.initialize());
+app.use(passport.session());
 
 //* Routes
 
