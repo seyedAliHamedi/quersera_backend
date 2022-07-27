@@ -28,6 +28,9 @@ const userSchema = mongoose.Schema({
   teachingCourses: {
     type: [mongoose.SchemaTypes.ObjectId],
   },
+  authCode: {
+    type: Number,
+  },
   createdAt: {
     type: Date,
     default: Date.now,
