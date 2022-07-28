@@ -1,5 +1,15 @@
 const router = require("express").Router();
 
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, path.join(__dirname, "uploads"));
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + "-" + file.originalname);
+  },
+});
+const upload = multer({ storage: storage });
+
 const Course = require("../models/course");
 router.get("/courses", (req, res) => {
   Course.find({})
@@ -79,6 +89,27 @@ router.get("/courses/filterd", async (req, res) => {
   } catch (error) {
     console.log(e.message);
   }
+});
+
+router.post("/courses/upload/:id", upload.single("course_image"), (req, res) => {
+  const url = path.join(__dirname, "/../uploads", req.file.filename);
+  const newImage = new Image({ urlString: url, size: req.file.size });
+  newImage
+    .save()
+    .then(() => {
+      Course.findOne({ _id: req.params.id })
+        .then((course) => {
+          course.imgUrl = url;
+          course
+            .save()
+            .then(() => {
+              res.json({ msg: "done" });
+            })
+            .catch((err) => console.log(err));
+        })
+        .catch((err) => console.log(err));
+    })
+    .catch((err) => console.log(err));
 });
 
 module.exports = router;
