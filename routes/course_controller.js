@@ -33,15 +33,52 @@ router.put("/courses/:id", (req, res) => {
     .catch((err) => console.log(err));
 });
 router.post("/courses/", (req, res) => {
-  const { name, imgUrl, description, institutions, year, public } = req.body;
+  const { name, imgUrl, description, institution, year, public } = req.body;
   const teacher = req.user._id;
-  const newCourse = new Course({ name, teacher, imgUrl, description, institutions, year, public });
+  const newCourse = new Course({ name, teacher, imgUrl, description, institution, year, public });
   newCourse
     .save()
     .then(() => {
       res.json({ msg: "Course added successfully" });
     })
     .catch((err) => console.log(err));
+});
+
+router.get("/courses/filterd", async (req, res) => {
+  try {
+    let course;
+    if (!req.headers["filters"].attending && !req.headers["filters"].teaching) {
+      course = {};
+    } else if (req.headers["filters"].attending && req.headers["filters"].teaching) {
+      course = await Course.where("name")
+        .equals(req.headers["filters"].title)
+        .where("institution")
+        .equals(req.headers["filters"].institution)
+        .where("year")
+        .equals(req.headers["filters"].year);
+    } else if (req.headers["filters"].teaching) {
+      course = await Course.where("name")
+        .equals(req.headers["filters"].title)
+        .where("institution")
+        .equals(req.headers["filters"].institution)
+        .where("year")
+        .equals(req.headers["filters"].year)
+        .where("teacher")
+        .equals(req.user._id);
+    } else {
+      course = await Course.where("name")
+        .equals(req.headers["filters"].title)
+        .where("institution")
+        .equals(req.headers["filters"].institution)
+        .where("year")
+        .equals(req.headers["filters"].year)
+        .where("teacher")
+        .ne(req.user._id);
+    }
+    res.send(course);
+  } catch (error) {
+    console.log(e.message);
+  }
 });
 
 module.exports = router;
