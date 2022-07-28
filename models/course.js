@@ -5,6 +5,9 @@ const courseSchema = mongoose.Schema({
     type: String,
     required: true,
   },
+  imgUrl: {
+    type: String,
+  },
   description: {
     type: String,
   },

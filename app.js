@@ -46,9 +46,9 @@ app.use(passport.session());
 // });
 
 app.use("/quersera/users", require("./routes/user_controller"));
-// app.use("/quersera/courses", require("./routes/course_controller"));
-// app.use("/quersera/practices", require("./routes/practice_controller"));
-// app.use("/quersera/questions", require("./routes/question_controller"));
+app.use("/quersera/courses", require("./routes/course_controller"));
+app.use("/quersera/practices", require("./routes/practice_controller"));
+app.use("/quersera/questions", require("./routes/question_controller"));
 
 //! SERVER
 const PORT = process.env.PORT || 90;

@@ -23,6 +23,7 @@ const practiceSchema = mongoose.Schema({
     type: Number,
     default: true,
   },
+  courseId: { type: mongoose.SchemaTypes.ObjectId },
   questions: {
     type: [mongoose.SchemaTypes.ObjectId],
   },
